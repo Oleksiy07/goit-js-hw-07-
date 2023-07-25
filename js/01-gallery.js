@@ -29,17 +29,25 @@ function onClick(evt) {
     return;
   }
   evt.preventDefault();
-  const instance = basicLightbox.create(`
+  const instance = basicLightbox.create(
+    `
     <img src="${target.dataset.source}" width="800" height="600">
-    `);
+    `,
+    {
+      onShow: instance => {
+        galleryList.addEventListener('keydown', onKeydown);
+      },
+      onClose: instance => {
+        galleryList.removeEventListener('keydown', onKeydown);
+      },
+    }
+  );
+
+  function onKeydown(evt) {
+    if (evt.code === 'Escape') {
+      instance.close();
+    }
+  }
 
   instance.show();
-
-  if (instance.visible()) {
-    galleryList.addEventListener('keydown', evt => {
-      if (evt.code === 'Escape') {
-        instance.close();
-      }
-    });
-  }
 }
